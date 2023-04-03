@@ -15,12 +15,12 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
+import React from "react";
 import { useLocation, NavLink } from "react-router-dom";
 
 import { Nav } from "react-bootstrap";
 
-import logo from "assets/img/reactlogo.png";
+import logo from "assets/img/main icon.png";
 
 function Sidebar({ color, image, routes }) {
   const location = useLocation();
@@ -41,12 +41,12 @@ function Sidebar({ color, image, routes }) {
             href="https://www.creative-tim.com?ref=lbd-sidebar"
             className="simple-text logo-mini mx-1"
           >
-            <div className="logo-img">
-              <img src={require("assets/img/reactlogo.png")} alt="..." />
+            <div className="logo-img overflow-hidden rounded-circle">
+              <img src={logo} alt="..." />
             </div>
           </a>
           <a className="simple-text" href="http://www.creative-tim.com">
-            Creative Tim
+            Expense Tracker
           </a>
         </div>
         <Nav>

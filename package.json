@@ -5,6 +5,7 @@
     "@fortawesome/fontawesome-free": "5.15.2",
     "bootstrap": "4.6.0",
     "chartist": "0.11.4",
+    "firebase": "^9.19.1",
     "gulp": "^4.0.2",
     "gulp-append-prepend": "1.0.9",
     "node-sass": "^8.0.0",
