@@ -28,11 +28,17 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import AdminLayout from "layouts/Admin.js";
 
+import Login from "pages/Login";
+import Register from "pages/Register";
+
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <BrowserRouter>
     <Switch>
+      <Route path='/user/login' render={(props) => <Login {...props} /> } />
+      <Route path='/user/register' render={(props) => <Register {...props} /> } />
       <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
       <Redirect from="/" to="/admin/dashboard" />
     </Switch>

@@ -33,6 +33,7 @@ function Admin() {
   const [hasImage, setHasImage] = React.useState(true);
   const location = useLocation();
   const mainPanel = React.useRef(null);
+
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/admin") {
@@ -43,12 +44,15 @@ function Admin() {
             key={key}
           />
         );
-      } else {
+      }
+      else {
         return null;
       }
     });
-  };
+  };  
+
   React.useEffect(() => {
+
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
     mainPanel.current.scrollTop = 0;
@@ -61,6 +65,8 @@ function Admin() {
       element.parentNode.removeChild(element);
     }
   }, [location]);
+
+
   return (
     <>
       <div className="wrapper">

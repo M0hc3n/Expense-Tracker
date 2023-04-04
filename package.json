@@ -8,6 +8,7 @@
     "firebase": "^9.19.1",
     "gulp": "^4.0.2",
     "gulp-append-prepend": "1.0.9",
+    "mdb-react-ui-kit": "^6.0.0",
     "node-sass": "^8.0.0",
     "react": ">=16.8.0",
     "react-bootstrap": "2.4.0",
