@@ -36,17 +36,6 @@ function App() {
     const city = e.target[5].value;
     const imageFile = e.target[6].files[0];
 
-
-    console.log({
-      fullName,
-      userName,
-      email,
-      password, 
-      country,
-      city,
-      imageFile
-    });
-
     try {
       // create the user
       const res = await createUserWithEmailAndPassword(auth, email, password);

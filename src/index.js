@@ -31,17 +31,22 @@ import AdminLayout from "layouts/Admin.js";
 import Login from "pages/Login";
 import Register from "pages/Register";
 
+import { AuthContextProvider } from './context/AuthContext'
+
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path='/user/login' element={<Login/>}  ></Route>
-      <Route path='/user/register' element={<Register/>}  ></Route>
-      <Route path="/admin/:route" element={<AdminLayout />} ></Route>
-      <Route path="/" element={<Navigate replace to="/admin/dashboard" />} />
-      {/* <Route from="/" to="/admin/dashboard" /> */}
-    </Routes>
-  </BrowserRouter>
+  <AuthContextProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/user/login' element={<Login/>}  ></Route>
+        <Route path='/user/register' element={<Register/>}  ></Route>
+        <Route path="/admin/:route" element={<AdminLayout />} ></Route>
+        <Route path="/" element={<Navigate replace to="/admin/dashboard" />} />
+        {/* <Route from="/" to="/admin/dashboard" /> */}
+      </Routes>
+    </BrowserRouter>
+  </AuthContextProvider>
 );

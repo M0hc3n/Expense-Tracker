@@ -1,4 +1,4 @@
-import React from "react";
+import React , { useContext , useMemo, useState}  from "react";
 
 // react-bootstrap components
 import {
@@ -13,25 +13,65 @@ import {
   Col
 } from "react-bootstrap";
 
+import { AuthContext } from '../context/AuthContext'
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "database/firebase";
+
+
 function User() {
+
+  const { currentUser, userInfo } = useContext(AuthContext);
+
+  while(userInfo === {}){
+    console.log(userInfo);
+  }
+
+  const [userName, setUserName] = useState(userInfo.userName);
+  const [email , setEmail] = useState(userInfo.email);
+  const [fullName, setFullName] = useState(userInfo.fullName);
+  const [city, setCity] = useState(userInfo.city);
+  const [country, setCountry] = useState(userInfo.country);
+
+ const handleUpdate = async (e) => {
+  e.preventDefault();
+
+  const userRef = doc(db, "users", currentUser.uid);
+
+  try {
+    await updateDoc(userRef, {
+      userName,
+      fullName,
+      "photoURL": userInfo.photoURL ,
+      email,
+      city,
+      country,
+      "uid": currentUser.uid
+    })
+
+  } catch (error) {
+    console.log(error);
+  }
+ }
+
   return (
     <>
       <Container fluid>
         <Row>
-          <Col md="8">
+          <Col md="7">
             <Card>
               <Card.Header>
                 <Card.Title as="h4">Edit Profile</Card.Title>
               </Card.Header>
               <Card.Body>
-                <Form>
+                <Form onSubmit={(e) => handleUpdate(e)}>
                   <Row>
                     <Col className=" px-1 ml-2" md="3">
                       <Form.Group>
                         <label>Username</label>
                         <Form.Control
-                          defaultValue="michael23"
-                          placeholder="Username"
+                          value={userName}
+                          placeholder={userInfo.userName}
+                          onChange={(e) => setUserName(e.target.value)}
                           type="text"
                         ></Form.Control>
                       </Form.Group>
@@ -42,7 +82,9 @@ function User() {
                           Email address
                         </label>
                         <Form.Control
-                          placeholder="Email"
+                          placeholder={userInfo.email}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           type="email"
                         ></Form.Control>
                       </Form.Group>
@@ -51,20 +93,11 @@ function User() {
                   <Row>
                     <Col className="pr-1" md="6">
                       <Form.Group>
-                        <label>First Name</label>
+                        <label>Full Name</label>
                         <Form.Control
-                          defaultValue="Mike"
-                          placeholder="Company"
-                          type="text"
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="6">
-                      <Form.Group>
-                        <label>Last Name</label>
-                        <Form.Control
-                          defaultValue="Andrew"
-                          placeholder="Last Name"
+                          placeholder={userInfo.fullName}
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
                           type="text"
                         ></Form.Control>
                       </Form.Group>
@@ -75,8 +108,9 @@ function User() {
                       <Form.Group>
                         <label>City</label>
                         <Form.Control
-                          defaultValue="Mike"
-                          placeholder="City"
+                          placeholder={userInfo.city}
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
                           type="text"
                         ></Form.Control>
                       </Form.Group>
@@ -85,8 +119,9 @@ function User() {
                       <Form.Group>
                         <label>Country</label>
                         <Form.Control
-                          defaultValue="Andrew"
-                          placeholder="Country"
+                          placeholder={userInfo.country}
+                          value={country}
+                          onChange={(e) => setCountry(e.target.value)}
                           type="text"
                         ></Form.Control>
                       </Form.Group>
@@ -112,11 +147,11 @@ function User() {
                     <img
                       alt="..."
                       className="avatar border-gray"
-                      src={require("assets/img/faces/face-3.jpg")}
+                      src={userInfo.photoURL}
                     ></img>
-                    <h5 className="title">Mike Andrew</h5>
+                    <h5 className="title">{userInfo.fullName}</h5>
                   </a>
-                  <p className="description">michael24</p>
+                  <p className="description">{userInfo.userName}</p>
                 </div>
               </Card.Body>
             </Card>

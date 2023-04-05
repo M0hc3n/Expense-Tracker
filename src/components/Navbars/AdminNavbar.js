@@ -20,6 +20,8 @@ import { useLocation } from "react-router-dom";
 import { Navbar, Container, Nav, Dropdown, Button } from "react-bootstrap";
 
 import routes from "routes.js";
+import { signOut } from "firebase/auth";
+import { auth } from "database/firebase";
 
 function Header() {
   const location = useLocation();
@@ -34,6 +36,12 @@ function Header() {
     };
     document.body.appendChild(node);
   };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+
+    signOut(auth);
+  }
 
   const getBrandText = () => {
     for (let i = 0; i < routes.length; i++) {
@@ -82,7 +90,7 @@ function Header() {
               <Nav.Link
                 className="m-0"
                 href="#pablo"
-                onClick={(e) => e.preventDefault()}
+                onClick={handleLogout}
               >
                 <span className="no-icon">Log out</span>
               </Nav.Link>
