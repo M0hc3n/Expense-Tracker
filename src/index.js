@@ -18,7 +18,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/css/animate.min.css";
@@ -36,11 +36,12 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <BrowserRouter>
-    <Switch>
-      <Route path='/user/login' render={(props) => <Login {...props} /> } />
-      <Route path='/user/register' render={(props) => <Register {...props} /> } />
-      <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-      <Redirect from="/" to="/admin/dashboard" />
-    </Switch>
+    <Routes>
+      <Route path='/user/login' element={<Login/>}  ></Route>
+      <Route path='/user/register' element={<Register/>}  ></Route>
+      <Route path="/admin/:route" element={<AdminLayout />} ></Route>
+      <Route path="/" element={<Navigate replace to="/admin/dashboard" />} />
+      {/* <Route from="/" to="/admin/dashboard" /> */}
+    </Routes>
   </BrowserRouter>
 );

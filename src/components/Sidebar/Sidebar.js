@@ -63,8 +63,7 @@ function Sidebar({ color, image, routes }) {
                 >
                   <NavLink
                     to={prop.layout + prop.path}
-                    className="nav-link"
-                    activeClassName="active"
+                    className={(navData) => (navData.isActive ? "nav-link active" : 'nav-link')}
                   >
                     <i className={prop.icon} />
                     <p>{prop.name}</p>
