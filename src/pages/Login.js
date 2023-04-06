@@ -7,7 +7,7 @@ import {
 from 'mdb-react-ui-kit';
 
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import { auth } from '../database/firebase'
 
