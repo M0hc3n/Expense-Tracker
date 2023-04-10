@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 
 import { AuthContext } from "../context/AuthContext";
-import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "../database/firebase";
 
 import { v4 as uuidv4 } from "uuid";
@@ -66,7 +66,6 @@ function User() {
   const handleAddingSubUser = async (e) => {
     e.preventDefault();
 
-    // 86c3ab01-c780-4cbc-adb0-333ee5f9db6c
     const subUserCodeTemp = uuidv4();
 
     try {

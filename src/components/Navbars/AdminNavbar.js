@@ -15,16 +15,18 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
-import { Navbar, Container, Nav, Dropdown, Button } from "react-bootstrap";
+import { Navbar, Container, Nav, Button } from "react-bootstrap";
 
 import routes from "routes.js";
 import { signOut } from "firebase/auth";
 import { auth } from "database/firebase";
 
 function Header() {
+
   const location = useLocation();
+  
   const mobileSidebarToggle = (e) => {
     e.preventDefault();
     document.documentElement.classList.toggle("nav-open");
@@ -63,7 +65,7 @@ function Header() {
             <i className="fas fa-ellipsis-v"></i>
           </Button>
           <Navbar.Brand
-            href="#home"
+            href="#"
             onClick={(e) => e.preventDefault()}
             className="mr-2"
           >
@@ -80,8 +82,7 @@ function Header() {
             <Nav.Item>
               <Nav.Link
                 className="m-0"
-                href="#pablo"
-                onClick={(e) => e.preventDefault()}
+                href="/admin/user"
               >
                 <span className="no-icon">Account</span>
               </Nav.Link>

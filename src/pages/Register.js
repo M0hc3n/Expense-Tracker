@@ -4,12 +4,11 @@ import {
   MDBInput,
   MDBBtn,
   MDBFile,
-  MDBCheckbox,
 } from "mdb-react-ui-kit";
 
 // import Form from 'react-bootstrap/Form';
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db, storage } from "../database/firebase";

@@ -34,8 +34,6 @@ function Admin() {
   const location = useLocation();
   const mainPanel = React.useRef(null);
 
-  console.log(location);
-
   const getRoute = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout + prop.path === location.pathname) {

@@ -1,22 +1,71 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import ChartistGraph from "react-chartist";
 // react-bootstrap components
-import {
-  Badge,
-  Button,
-  Card,
-  Navbar,
-  Nav,
-  Table,
-  Container,
-  Row,
-  Col,
-  Form,
-  OverlayTrigger,
-  Tooltip,
-} from "react-bootstrap";
+import { Card, Table, Container, Row, Col } from "react-bootstrap";
+
+import { AuthContext } from "context/AuthContext";
+import { db } from "database/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 function Dashboard() {
+  const { currentUser, userInfo } = useContext(AuthContext);
+
+  const [expenses, setExpenses] = useState([]);
+  const [sumOfExpenses, setSumOfExpenses] = useState();
+  const [subUsers, setSubUsers] = useState([]);
+
+
+  useEffect(() => {
+    try {
+      const q = query(
+        collection(db, "Expenses"),
+        where("user_id", "==", currentUser.uid)
+      );
+
+      getDocs(q).then((querySnapshot) => {
+        querySnapshot.forEach(async (docSnapshot) => {
+          setExpenses((oldVal) => [...oldVal, docSnapshot.data()]);
+
+          // update the total sum of the expenses
+          setSumOfExpenses( expenses.reduce((acc, curr) => acc + curr.expenseTotalPrice ,0) );
+
+          let sumOfExpenses_ = 0;
+
+          for(let i = 0 ; i < expenses.length ; i++){
+            sumOfExpenses_ += expenses[i]['expenseTotalPrice'];
+          }
+
+          setSumOfExpenses(sumOfExpenses_);
+
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      const q = query(
+        collection(db, "users"),
+        where("user_id", "==", currentUser.uid)
+      );
+
+      getDocs(q).then((querySnapshot) => {
+        querySnapshot.forEach(async (docSnapshot) => {
+          setSubUsers((oldVal) =>
+            oldVal.length > 0
+              ? oldVal
+              : docSnapshot.data()["fullName"]
+              ? [...oldVal, docSnapshot.data()]
+              : oldVal
+          );
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [currentUser]);
+
+
   return (
     <>
       <Container fluid>
@@ -33,7 +82,7 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">Expenses</p>
-                      <Card.Title as="h4">150GB</Card.Title>
+                      <Card.Title as="h4">$ {sumOfExpenses}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -59,7 +108,7 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">Revenue</p>
-                      <Card.Title as="h4">$ 1,345</Card.Title>
+                      <Card.Title as="h4">$ {userInfo.income}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -85,7 +134,7 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">Expenses</p>
-                      <Card.Title as="h4">23</Card.Title>
+                      <Card.Title as="h4">{expenses.length}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -110,8 +159,9 @@ function Dashboard() {
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
+                      {/* TODO */}
                       <p className="card-category">Subusers</p>
-                      <Card.Title as="h4">+45K</Card.Title>
+                      <Card.Title as="h4">{subUsers.length}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -239,7 +289,9 @@ function Dashboard() {
             <Card>
               <Card.Header>
                 <Card.Title as="h4">Income And Expenses</Card.Title>
-                <p className="card-category">Comparaison between Income and Expenses</p>
+                <p className="card-category">
+                  Comparaison between Income and Expenses
+                </p>
               </Card.Header>
               <Card.Body>
                 <div className="ct-chart" id="chartActivity">
@@ -261,31 +313,11 @@ function Dashboard() {
                       ],
                       series: [
                         [
-                          542,
-                          443,
-                          320,
-                          780,
-                          553,
-                          453,
-                          326,
-                          434,
-                          568,
-                          610,
-                          756,
+                          542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756,
                           895,
                         ],
                         [
-                          412,
-                          243,
-                          280,
-                          580,
-                          453,
-                          353,
-                          300,
-                          364,
-                          368,
-                          410,
-                          636,
+                          412, 243, 280, 580, 453, 353, 300, 364, 368, 410, 636,
                           695,
                         ],
                       ],
@@ -326,6 +358,34 @@ function Dashboard() {
                   Data information certified
                 </div>
               </Card.Footer>
+            </Card>
+          </Col>
+          <Col md="6">
+            <Card className="card-tasks">
+              <Card.Header>
+                <Card.Title as="h4">Expenses</Card.Title>
+                <p className="card-category">Your Expenses Feed </p>
+              </Card.Header>
+              <Card.Body>
+                <div className="table-full-width">
+                  <Table>
+                    <tbody>
+                      {
+                      expenses.map((expense, index) => {
+                        return (<tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>
+                            You have bought {expense.expenseName} of category{" "}
+                            {expense.expenseCategory}, and of unit price{" $"}
+                            {expense.expenseUnitPrice}. The total money spent is{" $"}
+                            {expense.expenseTotalPrice}
+                          </td>
+                        </tr>);
+                      })}
+                    </tbody>
+                  </Table>
+                </div>
+              </Card.Body>
             </Card>
           </Col>
         </Row>

@@ -18,18 +18,10 @@
 import Dashboard from "views/Dashboard.js";
 import UserProfile from "views/UserProfile.js";
 import TableList from "views/TableList.js";
-import Upgrade from "views/Upgrade.js";
+import AddExpense from "views/AddExpense.js";
 
 
 const dashboardRoutes = [
-  {
-    upgrade: true,
-    path: "/upgrade",
-    name: "Upgrade to PRO",
-    icon: "nc-icon nc-alien-33",
-    component: Upgrade,
-    layout: "/admin"
-  },
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -51,6 +43,13 @@ const dashboardRoutes = [
     component: TableList,
     layout: "/admin"
   }, 
+  {
+    path: "/add-expense",
+    name: "Add Expense",
+    icon: "fa-solid fa-money-check-dollar",
+    component: AddExpense,
+    layout: "/admin"
+  },
 ];
 
 export default dashboardRoutes;
