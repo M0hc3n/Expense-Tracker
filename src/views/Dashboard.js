@@ -7,13 +7,18 @@ import { AuthContext } from "context/AuthContext";
 import { db } from "database/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
+const LIST_OF_CATEGORIES = ["Fruits", "Vegetables", "Fun", "Luxury", "Other"];
+
 function Dashboard() {
   const { currentUser, userInfo } = useContext(AuthContext);
 
   const [expenses, setExpenses] = useState([]);
   const [sumOfExpenses, setSumOfExpenses] = useState();
   const [subUsers, setSubUsers] = useState([]);
+  const [subUsersExpenses, setSubUsersExpenses] = useState([[]]);
 
+  // available categories to be shown
+  const [listOfCategories, setListOfCategories] = useState([]);
 
   useEffect(() => {
     try {
@@ -23,20 +28,20 @@ function Dashboard() {
       );
 
       getDocs(q).then((querySnapshot) => {
-        querySnapshot.forEach(async (docSnapshot) => {
+        setExpenses([]);
+        querySnapshot.forEach((docSnapshot) => {
           setExpenses((oldVal) => [...oldVal, docSnapshot.data()]);
 
           // update the total sum of the expenses
-          setSumOfExpenses( expenses.reduce((acc, curr) => acc + curr.expenseTotalPrice ,0) );
+          // setSumOfExpenses( expenses.reduce((acc, curr) => acc + curr.expenseTotalPrice ,0) );
 
           let sumOfExpenses_ = 0;
 
-          for(let i = 0 ; i < expenses.length ; i++){
-            sumOfExpenses_ += expenses[i]['expenseTotalPrice'];
+          for (let i = 0; i < expenses.length; i++) {
+            sumOfExpenses_ += expenses[i]["expenseTotalPrice"];
           }
 
           setSumOfExpenses(sumOfExpenses_);
-
         });
       });
     } catch (error) {
@@ -50,7 +55,8 @@ function Dashboard() {
       );
 
       getDocs(q).then((querySnapshot) => {
-        querySnapshot.forEach(async (docSnapshot) => {
+        // handles their number
+        querySnapshot.forEach((docSnapshot) => {
           setSubUsers((oldVal) =>
             oldVal.length > 0
               ? oldVal
@@ -59,12 +65,60 @@ function Dashboard() {
               : oldVal
           );
         });
+
+        querySnapshot.forEach((docSnapshot) => {
+          if (docSnapshot.data()["fullName"]) {
+            const subQ = query(
+              collection(db, "Expenses"),
+              where("user_id", "==", docSnapshot.data()["sub_user_code"])
+            );
+
+            let subUserExpense = [];
+
+            getDocs(subQ).then((querySub) => {
+              querySub.forEach((docSub) => {
+                subUserExpense.push(docSub.data()["expenseTotalPrice"]);
+              });
+            });
+
+            subUsersExpenses(prev => [...prev, subUserExpense]);
+          }
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      const q = query(
+        collection(db, "Expenses Categories"),
+        where("user_id", "==", currentUser.uid)
+      );
+
+      setListOfCategories([]);
+
+      getDocs(q).then((querySnapshot) => {
+        querySnapshot.forEach((document) => {
+          console.log(document.data());
+
+          setListOfCategories((prev) => {
+            if (document.data()["numberOfExpenses"] > 0) {
+              return prev.concat({
+                category: document.data()["expenseCategory"],
+                cardinality: document.data()["numberOfExpenses"],
+              });
+            } else {
+              return prev.concat({ category: "", cardinality: 0 });
+            }
+          });
+        });
       });
     } catch (error) {
       console.log(error);
     }
   }, [currentUser]);
 
+  console.log(listOfCategories);
 
   return (
     <>
@@ -82,7 +136,7 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">Expenses</p>
-                      <Card.Title as="h4">$ {sumOfExpenses}</Card.Title>
+                      <Card.Title as="h4">$ {0}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -187,16 +241,7 @@ function Dashboard() {
                 <div className="ct-chart" id="chartHours">
                   <ChartistGraph
                     data={{
-                      labels: [
-                        "9:00AM",
-                        "12:00AM",
-                        "3:00PM",
-                        "6:00PM",
-                        "9:00PM",
-                        "12:00PM",
-                        "3:00AM",
-                        "6:00AM",
-                      ],
+                      labels: ["SUN", "MON", "TUE", "WED", "THR", "FRI", "SAT"],
                       series: [
                         [287, 385, 490, 492, 554, 586, 698, 695],
                         [67, 152, 143, 240, 287, 335, 435, 437],
@@ -263,17 +308,25 @@ function Dashboard() {
                 >
                   <ChartistGraph
                     data={{
-                      labels: ["40%", "20%", "40%"],
-                      series: [40, 20, 40],
+                      labels: listOfCategories.map(
+                        (categ) => categ["category"]
+                      ),
+                      series: listOfCategories.map(
+                        (categ) => categ["cardinality"]
+                      ),
                     }}
                     type="Pie"
                   />
                 </div>
                 <div className="legend">
-                  <i className="fas fa-circle text-info"></i>
-                  Open <i className="fas fa-circle text-danger"></i>
-                  Bounce <i className="fas fa-circle text-warning"></i>
-                  Unsubscribe
+                  <i className="fas fa-circle text-success"></i>
+                  Vegetables <i className="fas fa-circle text-info"></i>
+                  Luxury <i className="fas fa-circle text-danger"></i>
+                  Fun <br />
+                  <i className="fas fa-circle text-warning"></i>
+                  Other{" "}
+                  <i className="fas fa-circle" style={{ color: "#9368E9" }}></i>
+                  Fruits
                 </div>
                 <hr></hr>
                 <div className="stats">
@@ -370,17 +423,19 @@ function Dashboard() {
                 <div className="table-full-width">
                   <Table>
                     <tbody>
-                      {
-                      expenses.map((expense, index) => {
-                        return (<tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>
-                            You have bought {expense.expenseName} of category{" "}
-                            {expense.expenseCategory}, and of unit price{" $"}
-                            {expense.expenseUnitPrice}. The total money spent is{" $"}
-                            {expense.expenseTotalPrice}
-                          </td>
-                        </tr>);
+                      {expenses.map((expense, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>
+                              You have bought {expense.expenseName} of category{" "}
+                              {expense.expenseCategory}, and of unit price{" $"}
+                              {expense.expenseUnitPrice}. The total money spent
+                              is{" $"}
+                              {expense.expenseTotalPrice}
+                            </td>
+                          </tr>
+                        );
                       })}
                     </tbody>
                   </Table>

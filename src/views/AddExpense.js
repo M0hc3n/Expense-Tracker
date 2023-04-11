@@ -1,10 +1,17 @@
 import React, { useContext, useState } from "react";
 
 // react-bootstrap components
+import {
+  Button,
+  Card,
+  Form,
+  Container,
+  Row,
+  Dropdown,
+  Col,
+} from "react-bootstrap";
 
-  import { Button, Card, Form, Container, Row, Dropdown, Col } from "react-bootstrap";
-
-import { collection, updateDoc, addDoc, doc } from "firebase/firestore";
+import { collection, updateDoc, addDoc, doc, FieldValue, query, where, getDocs } from "firebase/firestore";
 
 import { AuthContext } from "context/AuthContext";
 import { db } from "database/firebase";
@@ -14,12 +21,9 @@ function AddExpense() {
   const [error, setError] = useState(false);
 
   const [expenseName, setExpenseName] = useState("");
-  const [expenseCategory, setExpenseCategory] = useState("");
+  const [expenseCategory, setExpenseCategory] = useState("Fruits");
   const [expenseUnitPrice, setExpenseUnitPrice] = useState(0);
   const [expenseTotalPrice, setExpenseTotalPrice] = useState(0);
-
-  const [selectedOption, setSelectedOption] = useState("Fruits");
-
 
   const { currentUser, userInfo } = useContext(AuthContext);
 
@@ -27,7 +31,8 @@ function AddExpense() {
     e.preventDefault();
 
     try {
-      const docRef = await addDoc(collection(db, "Expenses"), {
+      // adding the expense
+      const docRefExpenses = await addDoc(collection(db, "Expenses"), {
         user_id: currentUser.uid,
         expenseName,
         expenseCategory,
@@ -35,13 +40,33 @@ function AddExpense() {
         expenseTotalPrice,
       });
 
-      console.log("Document written with ID: ", docRef.id);
-
       const userRef = doc(db, "users", currentUser.uid);
 
+      // reducing the user income
       await updateDoc(userRef, {
         income: userInfo.income - expenseTotalPrice,
       });
+
+      // incrementing the number of expenses in that category
+      const q = query(
+        collection(db , 'Expenses Categories'),
+        where('user_id', '==', currentUser.uid),
+        where('expenseCategory' ,'==', expenseCategory)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      const userExpensesCategories = querySnapshot.docs[0].ref;
+
+      querySnapshot.forEach(async (document) => {
+
+        await updateDoc(userExpensesCategories, {
+          user_id: currentUser.uid,
+          expenseCategory,
+          numberOfExpenses: document.data()['numberOfExpenses'] + 1
+        });
+
+      })      
 
       setSuccessfullCreation(true);
     } catch (error) {
@@ -57,7 +82,7 @@ function AddExpense() {
   };
 
   const handleChange = (e) => {
-    setSelectedOption(e.target.value);
+    setExpenseCategory(e.target.value);
   };
 
   return (

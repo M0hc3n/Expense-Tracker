@@ -21,7 +21,10 @@ import {
   doc,
   setDoc,
   updateDoc,
+  addDoc,
 } from "firebase/firestore";
+
+const LIST_OF_CATEGORIES = ["Fruits", "Vegetables", "Fun", "Luxury", "Other"];
 
 function App() {
   const [err, setErr] = useState(false);
@@ -70,6 +73,17 @@ function App() {
                 city,
                 country,
               });
+
+              // setting the document in the categories db
+              for(const category of LIST_OF_CATEGORIES){
+                
+                await addDoc(collection(db, "Expenses Categories"), {
+                  user_id: res.user.uid,
+                  expenseCategory: category,
+                  numberOfExpenses: 0
+                })
+              }
+
             } catch (error) {
               console.log(error);
               setErr(true);
