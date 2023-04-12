@@ -1,0 +1,36 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1561a13e.css",
+    "main.js": "/static/js/main.35e1a1e1.js",
+    "static/media/fa-solid-900.svg": "/static/media/fa-solid-900.0454203f26b33fc02e2b.svg",
+    "static/media/fa-brands-400.svg": "/static/media/fa-brands-400.991c1c761fc31f9c3252.svg",
+    "static/media/sidebar-1.jpg": "/static/media/sidebar-1.2ea74e53b4baa6bbae05.jpg",
+    "static/media/fa-solid-900.eot": "/static/media/fa-solid-900.6606667d9800a27eb8b5.eot",
+    "static/media/fa-solid-900.ttf": "/static/media/fa-solid-900.915a0b79c22a1c1f64da.ttf",
+    "static/media/nucleo-icons.svg": "/static/media/nucleo-icons.6ff448a36d590360ffd6.svg",
+    "static/media/main icon.png": "/static/media/main icon.db69eb70ec768a827973.png",
+    "static/media/fa-regular-400.svg": "/static/media/fa-regular-400.f3187c7462849ed261a8.svg",
+    "static/media/fa-brands-400.eot": "/static/media/fa-brands-400.98f20b9ec79b2fee02a3.eot",
+    "static/media/fa-brands-400.ttf": "/static/media/fa-brands-400.330e879afe4a0abb35f2.ttf",
+    "static/media/sidebar-2.jpg": "/static/media/sidebar-2.00b17713383fae1acce2.jpg",
+    "static/media/fa-solid-900.woff": "/static/media/fa-solid-900.f4f93856730733912b1e.woff",
+    "static/media/fa-brands-400.woff": "/static/media/fa-brands-400.5f63cb7f47b6ea89773b.woff",
+    "static/media/fa-solid-900.woff2": "/static/media/fa-solid-900.3eb06c702e27fb110194.woff2",
+    "static/media/fa-brands-400.woff2": "/static/media/fa-brands-400.6e63bd22128f27b83f22.woff2",
+    "static/media/sidebar-3.jpg": "/static/media/sidebar-3.9992d0cef1150fe9146f.jpg",
+    "static/media/sidebar-4.jpg": "/static/media/sidebar-4.b7eb4d1bec304bbb3795.jpg",
+    "static/media/fa-regular-400.eot": "/static/media/fa-regular-400.62a07ffeac77696f17ef.eot",
+    "static/media/fa-regular-400.ttf": "/static/media/fa-regular-400.ac2367644e559de4ff33.ttf",
+    "static/media/nucleo-icons.eot": "/static/media/nucleo-icons.541f8898b990ff017268.eot",
+    "static/media/nucleo-icons.ttf": "/static/media/nucleo-icons.a30d0b0201482fcfffd3.ttf",
+    "static/media/fa-regular-400.woff": "/static/media/fa-regular-400.ea5a41ec4a24ce93298e.woff",
+    "static/media/nucleo-icons.woff": "/static/media/nucleo-icons.141e0c4652975b501bab.woff",
+    "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.2c154b0f8c0d8d166162.woff2",
+    "static/media/nucleo-icons.woff2": "/static/media/nucleo-icons.69d4ebfdc94eab6fdb6e.woff2",
+    "index.html": "/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.1561a13e.css",
+    "static/js/main.35e1a1e1.js"
+  ]
+}
