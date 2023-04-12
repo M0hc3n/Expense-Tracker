@@ -99,7 +99,7 @@ function App() {
 
       setSuccessfullCreation(true);
 
-      setInterval(() => {
+      setTimeout(() => {
         setSuccessfullCreation(false);
 
         navigate("/");
@@ -115,6 +115,7 @@ function App() {
 
         uploadBytesResumable(storageRef, imageFile).then(() => {
           getDownloadURL(storageRef).then(async (downloadUrl) => {
+
             try {
               await updateProfile(res.user, {
                 userName,
@@ -132,14 +133,26 @@ function App() {
 
                 await updateDoc(userRef, {
                   ...doc,
+                  uid: res.user.uid,
                   userName,
                   fullName,
                   email,
                   photoURL: downloadUrl,
                   city,
                   country,
+                  activated:true
                 })
               });
+
+              // setting the document in the categories db
+              for(const category of LIST_OF_CATEGORIES){
+                
+                await addDoc(collection(db, "Expenses Categories"), {
+                  user_id: subUserCode ,
+                  expenseCategory: category,
+                  numberOfExpenses: 0
+                })
+              }
 
             } catch (error) {
               console.log(error);
@@ -156,7 +169,7 @@ function App() {
 
       setSuccessfullCreation(true);
 
-      setInterval(() => {
+      setTimeout(() => {
         setSuccessfullCreation(false);
 
         navigate("/");

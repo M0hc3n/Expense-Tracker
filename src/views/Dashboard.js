@@ -7,7 +7,6 @@ import { AuthContext } from "context/AuthContext";
 import { db } from "database/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
-const LIST_OF_CATEGORIES = ["Fruits", "Vegetables", "Fun", "Luxury", "Other"];
 
 function Dashboard() {
   const { currentUser, userInfo } = useContext(AuthContext);
@@ -70,18 +69,22 @@ function Dashboard() {
           if (docSnapshot.data()["fullName"]) {
             const subQ = query(
               collection(db, "Expenses"),
-              where("user_id", "==", docSnapshot.data()["sub_user_code"])
+              where("user_id", "==", docSnapshot.data()["uid"])
             );
 
-            let subUserExpense = [];
+            setSubUsersExpenses([[]]);
 
             getDocs(subQ).then((querySub) => {
-              querySub.forEach((docSub) => {
-                subUserExpense.push(docSub.data()["expenseTotalPrice"]);
+              setSubUsersExpenses((prev) => {
+                let subUserExpense = [];
+
+                querySub.forEach((docSub) => {
+                  subUserExpense.push(docSub.data()["expenseTotalPrice"]);
+                });
+
+                return [...prev, subUserExpense];
               });
             });
-
-            subUsersExpenses(prev => [...prev, subUserExpense]);
           }
         });
       });
@@ -92,14 +95,17 @@ function Dashboard() {
     try {
       const q = query(
         collection(db, "Expenses Categories"),
-        where("user_id", "==", currentUser.uid)
+        where(
+          "user_id",
+          "==",
+          userInfo.is_sub_user ? userInfo.sub_user_code : currentUser.uid
+        )
       );
 
       setListOfCategories([]);
 
       getDocs(q).then((querySnapshot) => {
         querySnapshot.forEach((document) => {
-          console.log(document.data());
 
           setListOfCategories((prev) => {
             if (document.data()["numberOfExpenses"] > 0) {
@@ -118,7 +124,8 @@ function Dashboard() {
     }
   }, [currentUser]);
 
-  console.log(listOfCategories);
+  console.log(subUsersExpenses, listOfCategories);
+
 
   return (
     <>
@@ -136,7 +143,7 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">Expenses</p>
-                      <Card.Title as="h4">$ {0}</Card.Title>
+                      <Card.Title as="h4">$ {expenses.length}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -241,12 +248,13 @@ function Dashboard() {
                 <div className="ct-chart" id="chartHours">
                   <ChartistGraph
                     data={{
-                      labels: ["SUN", "MON", "TUE", "WED", "THR", "FRI", "SAT"],
-                      series: [
-                        [287, 385, 490, 492, 554, 586, 698, 695],
-                        [67, 152, 143, 240, 287, 335, 435, 437],
-                        [23, 113, 67, 108, 190, 239, 307, 308],
-                      ],
+                      // labels: ["SUN", "MON", "TUE", "WED", "THR", "FRI", "SAT"],
+                      // series: [
+                      //   [287, 385, 490, 492, 554, 586, 698, 695],
+                      //   [67, 152, 143, 240, 287, 335, 435, 437],
+                      //   [23, 113, 67, 108, 190, 239, 307, 308],
+                      // ],
+                      series: subUsersExpenses,
                     }}
                     type="Line"
                     options={{
@@ -281,12 +289,6 @@ function Dashboard() {
                 </div>
               </Card.Body>
               <Card.Footer>
-                <div className="legend">
-                  <i className="fas fa-circle text-info"></i>
-                  Open <i className="fas fa-circle text-danger"></i>
-                  Click <i className="fas fa-circle text-warning"></i>
-                  Click Second Time
-                </div>
                 <hr></hr>
                 <div className="stats">
                   <i className="fas fa-history"></i>
@@ -318,102 +320,17 @@ function Dashboard() {
                     type="Pie"
                   />
                 </div>
-                <div className="legend">
-                  <i className="fas fa-circle text-success"></i>
-                  Vegetables <i className="fas fa-circle text-info"></i>
-                  Luxury <i className="fas fa-circle text-danger"></i>
-                  Fun <br />
-                  <i className="fas fa-circle text-warning"></i>
-                  Other{" "}
-                  <i className="fas fa-circle" style={{ color: "#9368E9" }}></i>
-                  Fruits
-                </div>
                 <hr></hr>
                 <div className="stats">
                   <i className="far fa-clock"></i>
-                  Campaign sent 2 days ago
+                  Latest data update
                 </div>
               </Card.Body>
             </Card>
           </Col>
         </Row>
         <Row>
-          <Col md="6">
-            <Card>
-              <Card.Header>
-                <Card.Title as="h4">Income And Expenses</Card.Title>
-                <p className="card-category">
-                  Comparaison between Income and Expenses
-                </p>
-              </Card.Header>
-              <Card.Body>
-                <div className="ct-chart" id="chartActivity">
-                  <ChartistGraph
-                    data={{
-                      labels: [
-                        "Jan",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "Mai",
-                        "Jun",
-                        "Jul",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec",
-                      ],
-                      series: [
-                        [
-                          542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756,
-                          895,
-                        ],
-                        [
-                          412, 243, 280, 580, 453, 353, 300, 364, 368, 410, 636,
-                          695,
-                        ],
-                      ],
-                    }}
-                    type="Bar"
-                    options={{
-                      seriesBarDistance: 10,
-                      axisX: {
-                        showGrid: false,
-                      },
-                      height: "245px",
-                    }}
-                    responsiveOptions={[
-                      [
-                        "screen and (max-width: 640px)",
-                        {
-                          seriesBarDistance: 5,
-                          axisX: {
-                            labelInterpolationFnc: function (value) {
-                              return value[0];
-                            },
-                          },
-                        },
-                      ],
-                    ]}
-                  />
-                </div>
-              </Card.Body>
-              <Card.Footer>
-                <div className="legend">
-                  <i className="fas fa-circle text-info"></i>
-                  Income <i className="fas fa-circle text-danger"></i>
-                  Expenses
-                </div>
-                <hr></hr>
-                <div className="stats">
-                  <i className="fas fa-check"></i>
-                  Data information certified
-                </div>
-              </Card.Footer>
-            </Card>
-          </Col>
-          <Col md="6">
+          <Col md="12">
             <Card className="card-tasks">
               <Card.Header>
                 <Card.Title as="h4">Expenses</Card.Title>

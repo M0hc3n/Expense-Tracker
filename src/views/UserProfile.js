@@ -22,10 +22,6 @@ function User() {
 
   const [successfullCreation, setSuccessfullCreation] = useState(false);
 
-  while (userInfo === {}) {
-    console.log(userInfo);
-  }
-
   // this part of updating the profile
   const [userName, setUserName] = useState(userInfo.userName);
   const [email, setEmail] = useState(userInfo.email);
@@ -75,9 +71,10 @@ function User() {
       await addDoc(collection(db, 'users'), {
         user_id: currentUser.uid,
         is_sub_user: true,
-        granted_income: subUserIncome,
+        income: subUserIncome,
         sub_user_code: subUserCodeTemp,
         type: selectedOption,
+        activated: false
       } );
 
       setSuccessfullCreation(true);

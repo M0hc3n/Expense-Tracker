@@ -36,7 +36,7 @@ function App() {
       setSuccessfullLogin(true);
       setErr(false);
 
-      setInterval(() => {
+      setTimeout(() => {
         setSuccessfullLogin(false);
         navigate('/');
 
@@ -47,7 +47,7 @@ function App() {
       setErr(true);
       setLoading(false);
 
-      setInterval(() => {
+      setTimeout(() => {
         setErr(false);
       }, 3000);
 

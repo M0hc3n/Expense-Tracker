@@ -14,18 +14,14 @@ function TableList() {
     try {
       const q = query(
         collection(db, "users"),
-        where("user_id", "==", currentUser.uid)
+        where("user_id", "==", currentUser.uid),
+        where('activated', '==', true)
       );
 
+      setSubUsers([]);
       getDocs(q).then((querySnapshot) => {
         querySnapshot.forEach(async (docSnapshot) => {
-          setSubUsers((oldVal) =>
-            oldVal.length > 0
-              ? oldVal
-              : docSnapshot.data()["fullName"]
-              ? [...oldVal, docSnapshot.data()]
-              : oldVal
-          );
+          setSubUsers((oldVal) => [...oldVal, docSnapshot.data()]);
         });
       });
     } catch (error) {
@@ -62,7 +58,7 @@ function TableList() {
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{subuser.fullName}</td>
-                          <td>${subuser.granted_income}</td>
+                          <td>${subuser.income}</td>
                           <td>{subuser.country}</td>
                           <td>{subuser.city}</td>
                         </tr>

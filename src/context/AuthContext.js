@@ -18,15 +18,19 @@ export const AuthContextProvider = ({children}) => {
             setCurrentUser(user);
             console.log('user has changed ' , user);
 
-            const q = query(collection(db, "users"), where("uid", "==", user.uid));
+            let q = query(collection(db, "users"), where("uid", "==", user.uid));
             const querySnapshot = await getDocs(q);
 
             // render info of the user            
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(doc.id, " => ", doc.data());
-                setUserInfo(doc.data());
+
+                const document_data = doc.data();
+                setUserInfo({...document_data, document_id: doc.id});
+
             });
+            
         })
 
         // clean-up function to avoid memory leakage
@@ -34,6 +38,8 @@ export const AuthContextProvider = ({children}) => {
             unsub();
         }
     }, []);
+
+    console.log('here');
 
     return(
         <AuthContext.Provider value={{currentUser, userInfo}}>

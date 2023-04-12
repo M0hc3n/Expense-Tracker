@@ -15,8 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
-import { useLocation, Route, Routes } from "react-router-dom";
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
 
 import AdminNavbar from "components/Navbars/AdminNavbar";
 import Footer from "components/Footer/Footer";
@@ -26,6 +26,8 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 import routes from "routes.js";
 
 import sidebarImage from "assets/img/sidebar-3.jpg";
+import { useContext } from "react";
+import { AuthContext } from "context/AuthContext";
 
 function Admin() {
   const [image, setImage] = React.useState(sidebarImage);
@@ -33,6 +35,8 @@ function Admin() {
   const [hasImage, setHasImage] = React.useState(true);
   const location = useLocation();
   const mainPanel = React.useRef(null);
+
+  const { currentUser } = useContext(AuthContext);
 
   const getRoute = (routes) => {
     return routes.map((prop, key) => {
@@ -61,6 +65,11 @@ function Admin() {
       element.parentNode.removeChild(element);
     }
   }, [location]);
+
+
+  if(! currentUser ){
+    return <Navigate to='/user/login' />
+  }
 
 
   return (

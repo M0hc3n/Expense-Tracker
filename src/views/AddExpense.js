@@ -11,7 +11,16 @@ import {
   Col,
 } from "react-bootstrap";
 
-import { collection, updateDoc, addDoc, doc, FieldValue, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  updateDoc,
+  addDoc,
+  doc,
+  FieldValue,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 
 import { AuthContext } from "context/AuthContext";
 import { db } from "database/firebase";
@@ -40,7 +49,11 @@ function AddExpense() {
         expenseTotalPrice,
       });
 
-      const userRef = doc(db, "users", currentUser.uid);
+      const userRef = doc(
+        db,
+        "users",
+        userInfo.is_sub_user ? userInfo.document_id : currentUser.uid
+      );
 
       // reducing the user income
       await updateDoc(userRef, {
@@ -49,9 +62,9 @@ function AddExpense() {
 
       // incrementing the number of expenses in that category
       const q = query(
-        collection(db , 'Expenses Categories'),
-        where('user_id', '==', currentUser.uid),
-        where('expenseCategory' ,'==', expenseCategory)
+        collection(db, "Expenses Categories"),
+        where("user_id", "==", userInfo.is_sub_user ? userInfo.sub_user_code :currentUser.uid),
+        where("expenseCategory", "==", expenseCategory)
       );
 
       const querySnapshot = await getDocs(q);
@@ -59,14 +72,10 @@ function AddExpense() {
       const userExpensesCategories = querySnapshot.docs[0].ref;
 
       querySnapshot.forEach(async (document) => {
-
         await updateDoc(userExpensesCategories, {
-          user_id: currentUser.uid,
-          expenseCategory,
-          numberOfExpenses: document.data()['numberOfExpenses'] + 1
+          numberOfExpenses: document.data()["numberOfExpenses"] + 1,
         });
-
-      })      
+      });
 
       setSuccessfullCreation(true);
     } catch (error) {
@@ -168,7 +177,7 @@ function AddExpense() {
                   )}
                   {error && (
                     <div className="clearfix mt-2">
-                      <span className="text-success">
+                      <span className="text-danger">
                         Encountered an issue while adding expense... Retry Again
                       </span>
                     </div>
