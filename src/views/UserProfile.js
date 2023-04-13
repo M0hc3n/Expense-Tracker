@@ -108,7 +108,7 @@ function User() {
       setSuccessfullCreation(true);
     } catch (error) {
       console.log(error);
-      setErr(true);
+      setError(true);
       setLoading(false);
     }
 

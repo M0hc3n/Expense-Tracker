@@ -16,7 +16,6 @@ export const AuthContextProvider = ({children}) => {
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, async (user) => {
             setCurrentUser(user);
-            console.log('user has changed ' , user);
 
             let q;
 
@@ -28,14 +27,8 @@ export const AuthContextProvider = ({children}) => {
             
             const querySnapshot = await getDocs(q);
 
-            console.log(user.uid);
-
             // render info of the user            
             querySnapshot.forEach((doc) => {
-                console.log(doc.id);
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
-
                 const document_data = doc.data();
                 setUserInfo({...document_data, document_id: doc.id});
 
@@ -49,8 +42,6 @@ export const AuthContextProvider = ({children}) => {
             unsub();
         }
     }, []);
-
-    console.log('here');
 
     return(
         <AuthContext.Provider value={{currentUser, userInfo}}>

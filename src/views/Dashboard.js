@@ -105,7 +105,6 @@ function Dashboard() {
 
           setListOfCategories((prev) => {
             if (document.data()["numberOfExpenses"] > 0) {
-              console.log(document.id);
               return prev.concat({
                 category: document.data()["expenseCategory"],
                 cardinality: document.data()["numberOfExpenses"],
@@ -121,7 +120,6 @@ function Dashboard() {
     }
   }, [currentUser]);
 
-  console.log(subUsersExpenses, listOfCategories);
 
 
   return (
