@@ -19,6 +19,7 @@ import Dashboard from "views/Dashboard.js";
 import UserProfile from "views/UserProfile.js";
 import TableList from "views/TableList.js";
 import AddExpense from "views/AddExpense.js";
+import ShowExpenses from "views/ShowExpenses.js";
 
 
 const dashboardRoutes = [
@@ -48,6 +49,13 @@ const dashboardRoutes = [
     name: "Add Expense",
     icon: "fa-solid fa-money-check-dollar",
     component: AddExpense,
+    layout: "/admin"
+  },
+  {
+    path: "/show-expenses",
+    name: "List Expenses",
+    icon: "fa-solid fa-list ",
+    component: ShowExpenses,
     layout: "/admin"
   },
 ];

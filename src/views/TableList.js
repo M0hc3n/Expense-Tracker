@@ -58,7 +58,7 @@ function TableList() {
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{subuser.fullName}</td>
-                          <td>${subuser.income}</td>
+                          <td>$ {subuser.income}</td>
                           <td>{subuser.country}</td>
                           <td>{subuser.city}</td>
                         </tr>

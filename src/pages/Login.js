@@ -53,25 +53,25 @@ function App() {
 
     }
 
-    console.log('done done london');
   }
 
 
   return (
     <MDBContainer className="p-3 my-5 d-flex flex-column w-50">
-      <h2 className='mb-5 text-center'>Login to view your Expenses !</h2>
+      <h2 className='mb-5 text-center'>Login to manage your Expenses !</h2>
 
       <form onSubmit={handleSubmit}>
         <MDBInput wrapperClass='mb-4' label='Email address' id='form1' type='email'/>
         <MDBInput wrapperClass='mb-4' label='Password' id='form2' type='password'/>
 
-        <MDBBtn className="mb-4">Sign in</MDBBtn>
 
-        
-        {err && <span className='title' style={{color: 'red',fontSize:'1rem'}}>Wrong Credentials, retry...</span>}
-        {successfulLogin && <span className='title' style={{color: 'green', fontSize:'1rem'}}>redirecting to home page ...</span>}
+        <button type="submit" className="btn btn-primary mb-2">Sign in</button>
 
-        <div className="text-center">
+        <br />
+        {err && <span className='title text-danger' style={{fontSize:'1rem'}}>Wrong Credentials, Retry...</span>}
+        {successfulLogin && <span className='title text-success' style={{fontSize:'1rem'}}>Successfull Login, Redirecting to Home Page ...</span>}
+
+        <div className="text-center mt-2">
           <p>Not a member ? <a href="/user/register"> Register</a></p>
         </div>
 

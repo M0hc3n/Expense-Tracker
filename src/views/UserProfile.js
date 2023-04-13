@@ -21,6 +21,9 @@ function User() {
   const { currentUser, userInfo } = useContext(AuthContext);
 
   const [successfullCreation, setSuccessfullCreation] = useState(false);
+  const [successfulUpdate, setSuccessfullUpdate] = useState(false);
+  const [error , setError] = useState(false);
+  const [errorUpdate, setErrorUpdate] = useState(false);
 
   // this part of updating the profile
   const [userName, setUserName] = useState(userInfo.userName);
@@ -42,17 +45,28 @@ function User() {
 
     try {
       await updateDoc(userRef, {
-        userName,
-        fullName,
+        userName: userName ? userName : userInfo.fullName ,
+        fullName: fullName ? fullName : userInfo.fullName ,
         photoURL: userInfo.photoURL,
-        email,
-        city,
-        country,
+        email: email ? email : userInfo.email,
+        city: city ? city: userInfo.city,
+        income: income ? income : userInfo.income ? userInfo.income : 0,
+        country: country ? country: userInfo.country,
         uid: currentUser.uid,
       });
+
+      setSuccessfullUpdate(true);
+
     } catch (error) {
       console.log(error);
+      setSuccessfullUpdate(false);
+      setErrorUpdate(true);
     }
+
+    setTimeout(() => {
+      setSuccessfullUpdate(false);
+
+    }, 4000);
   };
 
   const handleChange = (e) => {
@@ -66,6 +80,11 @@ function User() {
 
     try {
 
+      let today = new Date();
+      let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+      let dateTime = date+' '+time;
+
       setSubUserCode(subUserCodeTemp);
 
       await addDoc(collection(db, 'users'), {
@@ -77,6 +96,15 @@ function User() {
         activated: false
       } );
 
+      await addDoc(collection(db, "Expenses"), {
+        user_id: currentUser.uid,
+        expenseName: "Adding a Sub user",
+        expenseCategory: "Sub-user",
+        expenseUnitPrice: subUserIncome,
+        expenseTotalPrice: subUserIncome,
+        created_at: dateTime
+      });
+
       setSuccessfullCreation(true);
     } catch (error) {
       console.log(error);
@@ -85,6 +113,8 @@ function User() {
     }
 
   };
+
+  console.log(userInfo);
 
   return (
     <>
@@ -135,7 +165,7 @@ function User() {
                         ></Form.Control>
                       </Form.Group>
                     </Col>
-                    <Col className="pr-1" md="6">
+                    { ! userInfo.is_sub_user && <Col className="pr-1" md="6">
                       <Form.Group>
                         <label>Income</label>
                         <Form.Control
@@ -145,7 +175,7 @@ function User() {
                           type="number"
                         ></Form.Control>
                       </Form.Group>
-                    </Col>
+                    </Col>}
                   </Row>
                   <Row>
                     <Col className="pr-1" md="4">
@@ -178,7 +208,11 @@ function User() {
                   >
                     Update Profile
                   </Button>
-                  <div className="clearfix"></div>
+                  <div className="clearfix">
+                    {errorUpdate && <span className='title text-danger' style={{fontSize:'1rem'}}>An Error had happened, Try Again Later...</span>}
+                    {successfulUpdate && <span className='title text-success' style={{fontSize:'1rem'}}>Updated Successfully </span>}
+
+                  </div>
                 </Form>
               </Card.Body>
             </Card>

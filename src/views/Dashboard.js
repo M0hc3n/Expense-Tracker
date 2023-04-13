@@ -5,7 +5,7 @@ import { Card, Table, Container, Row, Col } from "react-bootstrap";
 
 import { AuthContext } from "context/AuthContext";
 import { db } from "database/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 
 
 function Dashboard() {
@@ -23,25 +23,21 @@ function Dashboard() {
     try {
       const q = query(
         collection(db, "Expenses"),
-        where("user_id", "==", currentUser.uid)
+        where("user_id", "==", currentUser.uid),
+        orderBy('created_at', "desc"),
+        limit(5)
       );
 
       getDocs(q).then((querySnapshot) => {
         setExpenses([]);
+        setSumOfExpenses(0);
+
         querySnapshot.forEach((docSnapshot) => {
           setExpenses((oldVal) => [...oldVal, docSnapshot.data()]);
 
-          // update the total sum of the expenses
-          // setSumOfExpenses( expenses.reduce((acc, curr) => acc + curr.expenseTotalPrice ,0) );
-
-          let sumOfExpenses_ = 0;
-
-          for (let i = 0; i < expenses.length; i++) {
-            sumOfExpenses_ += expenses[i]["expenseTotalPrice"];
-          }
-
-          setSumOfExpenses(sumOfExpenses_);
+          setSumOfExpenses( prev => prev + parseInt(docSnapshot.data()['expenseTotalPrice']) );
         });
+
       });
     } catch (error) {
       console.log(error);
@@ -56,7 +52,7 @@ function Dashboard() {
       getDocs(q).then((querySnapshot) => {
         // handles their number
         querySnapshot.forEach((docSnapshot) => {
-          setSubUsers((oldVal) =>
+          setSubUsers((oldVal) => 
             oldVal.length > 0
               ? oldVal
               : docSnapshot.data()["fullName"]
@@ -109,6 +105,7 @@ function Dashboard() {
 
           setListOfCategories((prev) => {
             if (document.data()["numberOfExpenses"] > 0) {
+              console.log(document.id);
               return prev.concat({
                 category: document.data()["expenseCategory"],
                 cardinality: document.data()["numberOfExpenses"],
@@ -143,7 +140,7 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">Expenses</p>
-                      <Card.Title as="h4">$ {expenses.length}</Card.Title>
+                      <Card.Title as="h4">$ {sumOfExpenses}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -152,7 +149,7 @@ function Dashboard() {
                 <hr></hr>
                 <div className="stats">
                   <i className="fas fa-redo mr-1"></i>
-                  Update Now
+                  Seconds ago
                 </div>
               </Card.Footer>
             </Card>
@@ -169,7 +166,7 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">Revenue</p>
-                      <Card.Title as="h4">$ {userInfo.income}</Card.Title>
+                      <Card.Title as="h4">$ {userInfo.income ? userInfo.income : 0}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -178,7 +175,7 @@ function Dashboard() {
                 <hr></hr>
                 <div className="stats">
                   <i className="far fa-calendar-alt mr-1"></i>
-                  Last day
+                  Last update
                 </div>
               </Card.Footer>
             </Card>
@@ -204,7 +201,7 @@ function Dashboard() {
                 <hr></hr>
                 <div className="stats">
                   <i className="far fa-clock-o mr-1"></i>
-                  In the last hour
+                  In the last update
                 </div>
               </Card.Footer>
             </Card>
@@ -231,7 +228,7 @@ function Dashboard() {
                 <hr></hr>
                 <div className="stats">
                   <i className="fas fa-redo mr-1"></i>
-                  Update now
+                  Seconds ago
                 </div>
               </Card.Footer>
             </Card>
@@ -242,18 +239,12 @@ function Dashboard() {
             <Card>
               <Card.Header>
                 <Card.Title as="h4">Subusers Expenses</Card.Title>
-                <p className="card-category">Last 24 Hours </p>
+                <p className="card-category">Last Update </p>
               </Card.Header>
               <Card.Body>
                 <div className="ct-chart" id="chartHours">
                   <ChartistGraph
                     data={{
-                      // labels: ["SUN", "MON", "TUE", "WED", "THR", "FRI", "SAT"],
-                      // series: [
-                      //   [287, 385, 490, 492, 554, 586, 698, 695],
-                      //   [67, 152, 143, 240, 287, 335, 435, 437],
-                      //   [23, 113, 67, 108, 190, 239, 307, 308],
-                      // ],
                       series: subUsersExpenses,
                     }}
                     type="Line"
@@ -292,7 +283,7 @@ function Dashboard() {
                 <hr></hr>
                 <div className="stats">
                   <i className="fas fa-history"></i>
-                  Updated 3 minutes ago
+                  Updated seconds ago
                 </div>
               </Card.Footer>
             </Card>
@@ -334,7 +325,7 @@ function Dashboard() {
             <Card className="card-tasks">
               <Card.Header>
                 <Card.Title as="h4">Expenses</Card.Title>
-                <p className="card-category">Your Expenses Feed </p>
+                <p className="card-category">Your Recent Expenses Feed </p>
               </Card.Header>
               <Card.Body>
                 <div className="table-full-width">

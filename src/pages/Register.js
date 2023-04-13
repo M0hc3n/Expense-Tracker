@@ -31,7 +31,7 @@ function App() {
 
   const [successfulCreation, setSuccessfullCreation] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isSubUser, setIsSubUser] = useState(true);
+  const [isSubUser, setIsSubUser] = useState(false);
   const [subUserCode, setSubUserCode] = useState("");
   const navigate = useNavigate();
 
@@ -67,8 +67,8 @@ function App() {
                 uid: res.user.uid,
                 userName,
                 fullName,
-                income,
                 email,
+                income:0,
                 photoURL: downloadUrl,
                 city,
                 country,
@@ -187,6 +187,7 @@ function App() {
           label="Full Name"
           id="form-full-name"
           type="text"
+          required
         />
 
         <MDBInput
@@ -194,6 +195,8 @@ function App() {
           label="User Name"
           id="form-user-name"
           type="text"
+          required
+
         />
 
         <MDBInput
@@ -201,12 +204,16 @@ function App() {
           label="Email address"
           id="form-email"
           type="email"
+          required
+
         />
         <MDBInput
           wrapperClass="mb-4"
           label="Password"
           id="form-pass"
           type="password"
+          required
+
         />
 
         <MDBInput
@@ -214,11 +221,13 @@ function App() {
           label="Country"
           id="form-country"
           type="text"
+          required
+
         />
 
-        <MDBInput wrapperClass="mb-4" label="City" id="form-city" type="text" />
+        <MDBInput wrapperClass="mb-4" label="City" id="form-city" type="text" required/>
 
-        <MDBFile className="mb-4 border-0" label="Image" id="form-file" />
+        <MDBFile className="mb-4 border-0" label="Image" id="form-file" required />
 
         <div className="d-flex">
           <label
@@ -255,11 +264,13 @@ function App() {
           />
         )}
 
-        <MDBBtn>Sign up</MDBBtn>
+        <button type="submit" className="btn btn-primary">Sign up</button>
 
-        {err && <span className="title"> An error has happened </span>}
+        <br />
+
+        {err && <span className="title mt-1 text-danger"> An error has happened, Retry ... </span>}
         {successfulCreation && (
-          <span className="title" style={{ color: "green", fontSize: "1rem" }}>
+          <span className="title mt-1 text-success" style={{ fontSize: "1rem" }}>
             {" "}
             Account created successfully, Wait ...{" "}
           </span>

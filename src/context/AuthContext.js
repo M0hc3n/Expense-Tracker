@@ -18,11 +18,21 @@ export const AuthContextProvider = ({children}) => {
             setCurrentUser(user);
             console.log('user has changed ' , user);
 
-            let q = query(collection(db, "users"), where("uid", "==", user.uid));
+            let q;
+
+            if(user.uid){
+                q =  query(collection(db, "users"), where("uid", "==", user.uid));
+            } else{
+                q = query(collection(db, "users"), where('is_sub_user', '==', true), where('email', '==', user.email));
+            }
+            
             const querySnapshot = await getDocs(q);
+
+            console.log(user.uid);
 
             // render info of the user            
             querySnapshot.forEach((doc) => {
+                console.log(doc.id);
                 // doc.data() is never undefined for query doc snapshots
                 console.log(doc.id, " => ", doc.data());
 
@@ -30,6 +40,7 @@ export const AuthContextProvider = ({children}) => {
                 setUserInfo({...document_data, document_id: doc.id});
 
             });
+
             
         })
 

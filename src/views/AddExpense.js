@@ -28,6 +28,7 @@ import { db } from "database/firebase";
 function AddExpense() {
   const [successfulCreation, setSuccessfullCreation] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [expenseName, setExpenseName] = useState("");
   const [expenseCategory, setExpenseCategory] = useState("Fruits");
@@ -38,54 +39,76 @@ function AddExpense() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(false);
+    setErrorMessage("");
 
     try {
-      // adding the expense
-      const docRefExpenses = await addDoc(collection(db, "Expenses"), {
-        user_id: currentUser.uid,
-        expenseName,
-        expenseCategory,
-        expenseUnitPrice,
-        expenseTotalPrice,
-      });
-
       const userRef = doc(
         db,
         "users",
         userInfo.is_sub_user ? userInfo.document_id : currentUser.uid
       );
 
-      // reducing the user income
-      await updateDoc(userRef, {
-        income: userInfo.income - expenseTotalPrice,
-      });
+      if (parseInt(userInfo.income) > expenseTotalPrice) {
 
-      // incrementing the number of expenses in that category
-      const q = query(
-        collection(db, "Expenses Categories"),
-        where("user_id", "==", userInfo.is_sub_user ? userInfo.sub_user_code :currentUser.uid),
-        where("expenseCategory", "==", expenseCategory)
-      );
+        let today = new Date();
+        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        let dateTime = date+' '+time;
 
-      const querySnapshot = await getDocs(q);
-
-      const userExpensesCategories = querySnapshot.docs[0].ref;
-
-      querySnapshot.forEach(async (document) => {
-        await updateDoc(userExpensesCategories, {
-          numberOfExpenses: document.data()["numberOfExpenses"] + 1,
+        // adding the expense
+        await addDoc(collection(db, "Expenses"), {
+          user_id: currentUser.uid,
+          expenseName,
+          expenseCategory,
+          expenseUnitPrice,
+          expenseTotalPrice,
+          created_at: dateTime
         });
-      });
+        
+        // reducing the user income
+        await updateDoc(userRef, {
+          income: parseInt(userInfo.income) - expenseTotalPrice,
+        });
 
-      setSuccessfullCreation(true);
+        // incrementing the number of expenses in that category
+        const q = query(
+          collection(db, "Expenses Categories"),
+          where(
+            "user_id",
+            "==",
+            userInfo.is_sub_user ? userInfo.sub_user_code : currentUser.uid
+          ),
+          where("expenseCategory", "==", expenseCategory)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        const userExpensesCategories = querySnapshot.docs[0].ref;
+
+        querySnapshot.forEach(async (document) => {
+          await updateDoc(userExpensesCategories, {
+            numberOfExpenses: document.data()["numberOfExpenses"] + 1,
+          });
+        });
+
+        setSuccessfullCreation(true);
+      
+      } else {
+        setSuccessfullCreation(false);
+        setError(true);
+
+        setErrorMessage(`The expense given exceeds your current balance of $ ${userInfo.income}.`);
+      } 
     } catch (error) {
       console.log(error);
+      errorMessage("");
       setError(true);
       setSuccessfullCreation(false);
       return;
     }
 
-    setInterval(() => {
+    setTimeout(() => {
       setSuccessfullCreation(false);
     }, 4000);
   };
@@ -119,7 +142,7 @@ function AddExpense() {
                     </Col>
                     <Col className="pl-1" md="5">
                       <Dropdown className="d-flex form-select flex-column ml-2 my-2 h-25">
-                        <label htmlFor="dropdown">Categpry</label>
+                        <label htmlFor="dropdown">Category</label>
                         <select
                           id="dropdown"
                           className="form-control"
@@ -178,7 +201,9 @@ function AddExpense() {
                   {error && (
                     <div className="clearfix mt-2">
                       <span className="text-danger">
-                        Encountered an issue while adding expense... Retry Again
+                        {
+                          errorMessage.length > 0 ? errorMessage : "Encountered an issue while adding expense... Retry Again"
+                        }
                       </span>
                     </div>
                   )}
