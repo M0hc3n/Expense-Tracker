@@ -7,7 +7,7 @@ import {
 from 'mdb-react-ui-kit';
 
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { auth } from '../database/firebase'
 
@@ -67,7 +67,7 @@ function App() {
         {successfulLogin && <span className='title text-success' style={{fontSize:'1rem'}}>Successfull Login, Redirecting to Home Page ...</span>}
 
         <div className="text-center mt-2">
-          <p>Not a member ? <a href="/user/register"> Register</a></p>
+          <p>Not a member ? <Link to="/user/register"> Register</Link></p>
         </div>
 
       </form>

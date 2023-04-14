@@ -215,7 +215,6 @@ function Dashboard() {
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      {/* TODO */}
                       <p className="card-category">Subusers</p>
                       <Card.Title as="h4">{subUsers.length}</Card.Title>
                     </div>

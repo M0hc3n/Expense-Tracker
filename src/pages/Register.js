@@ -8,7 +8,7 @@ import {
 
 // import Form from 'react-bootstrap/Form';
 
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db, storage } from "../database/firebase";
@@ -103,6 +103,7 @@ function App() {
         setSuccessfullCreation(false);
 
         navigate("/");
+        // return <Navigate to='/' />
       }, 4000);
     } else {
 
@@ -278,7 +279,7 @@ function App() {
       </form>
       <div className="text-center mt-3">
         <p>
-          Already have an account ? <a href="/user/login"> Login</a>
+          Already have an account ? <Link to="/user/login"> Login</Link>
         </p>
       </div>
     </MDBContainer>
