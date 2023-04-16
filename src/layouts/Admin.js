@@ -36,7 +36,7 @@ function Admin() {
   const location = useLocation();
   const mainPanel = React.useRef(null);
 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, userInfo } = useContext(AuthContext);
 
   const getRoute = (routes) => {
     return routes.map((prop, key) => {
@@ -70,6 +70,15 @@ function Admin() {
   if(! currentUser ){
     return <Navigate to='/user/login' />
   }
+
+  if(userInfo.activated === false){
+    return(
+      <h1>
+        ACTIVATE YOUR ACCOUNT DUD !
+      </h1>
+    )
+  } 
+
 
 
   return (
