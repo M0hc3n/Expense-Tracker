@@ -74,7 +74,7 @@ function Admin() {
   if(userInfo.activated === false){
     return(
       <h1>
-        ACTIVATE YOUR ACCOUNT DUD !
+        ACTIVATE YOUR ACCOUNT !
       </h1>
     )
   } 

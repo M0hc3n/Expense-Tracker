@@ -5,8 +5,14 @@ import { Card, Table, Container, Row, Col } from "react-bootstrap";
 
 import { AuthContext } from "context/AuthContext";
 import { db } from "database/firebase";
-import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
-
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 
 function Dashboard() {
   const { currentUser, userInfo } = useContext(AuthContext);
@@ -24,7 +30,7 @@ function Dashboard() {
       const q = query(
         collection(db, "Expenses"),
         where("user_id", "==", currentUser.uid),
-        orderBy('created_at', "desc"),
+        orderBy("created_at", "desc"),
         limit(5)
       );
 
@@ -35,9 +41,10 @@ function Dashboard() {
         querySnapshot.forEach((docSnapshot) => {
           setExpenses((oldVal) => [...oldVal, docSnapshot.data()]);
 
-          setSumOfExpenses( prev => prev + parseInt(docSnapshot.data()['expenseTotalPrice']) );
+          setSumOfExpenses(
+            (prev) => prev + parseInt(docSnapshot.data()["expenseTotalPrice"])
+          );
         });
-
       });
     } catch (error) {
       console.log(error);
@@ -52,7 +59,7 @@ function Dashboard() {
       getDocs(q).then((querySnapshot) => {
         // handles their number
         querySnapshot.forEach((docSnapshot) => {
-          setSubUsers((oldVal) => 
+          setSubUsers((oldVal) =>
             oldVal.length > 0
               ? oldVal
               : docSnapshot.data()["fullName"]
@@ -102,7 +109,6 @@ function Dashboard() {
 
       getDocs(q).then((querySnapshot) => {
         querySnapshot.forEach((document) => {
-
           setListOfCategories((prev) => {
             if (document.data()["numberOfExpenses"] > 0) {
               return prev.concat({
@@ -119,8 +125,6 @@ function Dashboard() {
       console.log(error);
     }
   }, [currentUser]);
-
-
 
   return (
     <>
@@ -164,7 +168,9 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">Revenue</p>
-                      <Card.Title as="h4">$ {userInfo.income ? userInfo.income : 0}</Card.Title>
+                      <Card.Title as="h4">
+                        $ {userInfo.income ? userInfo.income : 0}
+                      </Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -329,18 +335,31 @@ function Dashboard() {
                   <Table>
                     <tbody>
                       {expenses.map((expense, index) => {
-                        return (
-                          <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>
-                              You have bought {expense.expenseName} of category{" "}
-                              {expense.expenseCategory}, and of unit price{" $"}
-                              {expense.expenseUnitPrice}. The total money spent
-                              is{" $"}
-                              {expense.expenseTotalPrice}
-                            </td>
-                          </tr>
-                        );
+                        if (expense.expenseCategory === "Sub-user") {
+                          return (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>
+                                You have bought {expense.expenseName} of
+                                category {expense.expenseCategory}, and of unit
+                                price{" $"}
+                                {expense.expenseUnitPrice}. The total money
+                                spent is{" $"}
+                                {expense.expenseTotalPrice}
+                              </td>
+                            </tr>
+                          );
+                        } else {
+                          return (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>
+                                You have granted ${expense.expenseTotalPrice} to
+                                a new subuser.
+                              </td>
+                            </tr>
+                          );
+                        }
                       })}
                     </tbody>
                   </Table>

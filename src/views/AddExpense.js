@@ -98,7 +98,7 @@ function AddExpense() {
         setSuccessfullCreation(false);
         setError(true);
 
-        setErrorMessage(`The expense given exceeds your current balance of $ ${userInfo.income}.`);
+        setErrorMessage(`The expense given exceeds your current balance of $ ${userInfo.income ? userInfo.income : 0 }.`);
       } 
     } catch (error) {
       console.log(error);

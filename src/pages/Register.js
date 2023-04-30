@@ -36,6 +36,7 @@ function App() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    setErr(false);
     setLoading(true);
     e.preventDefault();
 
@@ -88,6 +89,7 @@ function App() {
               console.log(error);
               setErr(true);
               setLoading(false);
+              return;
             }
           });
         });
@@ -95,9 +97,10 @@ function App() {
         console.log(error);
         setErr(true);
         setLoading(false);
+        return;
       }
 
-      setSuccessfullCreation(true);
+      if(! err ) setSuccessfullCreation(true);
 
       setTimeout(() => {
         setSuccessfullCreation(false);
@@ -159,6 +162,7 @@ function App() {
               console.log(error);
               setErr(true);
               setLoading(false);
+              return;
             }
           });
         });
@@ -166,9 +170,10 @@ function App() {
         console.log(error);
         setErr(true);
         setLoading(false);
+        return;
       }
 
-      setSuccessfullCreation(true);
+      if(!err) setSuccessfullCreation(true);
 
       setTimeout(() => {
         setSuccessfullCreation(false);
@@ -228,7 +233,7 @@ function App() {
 
         <MDBInput wrapperClass="mb-4" label="City" id="form-city" type="text" required/>
 
-        <MDBFile className="mb-4 border-0" label="Image" id="form-file" required />
+        <MDBFile className="mb-4 border-0" label="Image" id="form-file" accept="image/png" required />
 
         <div className="d-flex">
           <label
